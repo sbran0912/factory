@@ -2,7 +2,7 @@
 import * as lb2d from './lb2d.js';
 
 /** @type {lb2d.Vector} */
-const v0 = lb2d.Vector(20, 20);
+const v0 = lb2d.fromAngle(150, 10);
 
 const v1 = lb2d.Vector(0,100);
 const v2 = v1.copy();
