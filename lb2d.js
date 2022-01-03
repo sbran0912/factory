@@ -12,6 +12,10 @@ export let mouseY = 0;
 let mouseStatus = 0;
 let loop = true;
 
+/** Init canvas
+ * @type {(w: number, h: number) => void}
+ * @param w width of canvas
+ * @param h height of canvas */
 export function init(w, h) {
   canv.width = w;
   canv.height = h;
@@ -27,6 +31,10 @@ export function init(w, h) {
   canv.addEventListener("touchend", setTouchUp);
 }
 
+/** Starts Animation Loop
+ * @type {(fnDraw: function) => void}
+ * @param fnDraw Callback Function
+ */
 export function startAnimation(fnDraw) {
   let draw = fnDraw;
   loop = true;
@@ -39,46 +47,66 @@ export function startAnimation(fnDraw) {
   window.requestAnimationFrame(animate);
 }
 
+/** get width of canvas 
+ * @type {() => number} */
 export function getWidth() {
   return canv.width;
 }
 
+/** get height of canvas 
+ * @type {() => number} */
 export function getHeight() {
   return canv.height;
 }
 
+/** stop looping */
 export function noLoop() {
   loop = false;
 }
 
+/** update mouse position
+ * @type {(e: MouseEvent) => void} 
+ */
 function updMousePos(e) {
   mouseX = e.offsetX;
   mouseY = e.offsetY;
 }
 
+/** update status down position */
 function setMouseDown() {
   mouseStatus = 1;
 }
 
+/** update status up position */
 function setMouseUp() {
   mouseStatus = 2;
 }
 
+/** update touch position
+ * @type {(e: TouchEvent) => void} */
 function updTouchPos(e) {
   e.preventDefault();
+  //@ts-ignore
   mouseX = e.targetTouches[0].pageX - e.target.getBoundingClientRect().left;
+  //@ts-ignore
   mouseY = e.targetTouches[0].pageY - e.target.getBoundingClientRect().top;
 }
 
+/** update status down position
+ * @type {(e: TouchEvent) => void} 
+ */
 function setTouchDown(e) {
   mouseStatus = 1;
   updTouchPos(e);
 }
 
-export function setTouchUp(e) {
+/** update status up position */
+export function setTouchUp() {
   mouseStatus = 2;
 }
 
+/** returns true when down position 
+ * @type {() => boolean} */
 export function isMouseDown() {
   if (mouseStatus == 1) {
     return true;
@@ -87,6 +115,8 @@ export function isMouseDown() {
   }
 }
 
+/** returns true when up position 
+ * @type {() => boolean} */
 export function isMouseUp() {
   if (mouseStatus == 2) {
     mouseStatus = 0;
@@ -96,6 +126,8 @@ export function isMouseUp() {
   }
 }
 
+/** creates Paragraph-Element on html
+ * @type {(item: string) => void} */
 export function createP(item) {
   const newItem = document.createElement("p");
   newItem.textContent = item;
