@@ -332,7 +332,7 @@ export function circle(x, y, radius, style = 0) {
 
 /** Interface Perlin
  * @typedef {Object} Perlin
- * @property {(x: number, y: number, z: number) => number} noise returns perlin noise value (between 0 and 1)
+ * @property {(x: number, y?: number, z?: number) => number} noise returns perlin noise value (between 0 and 1)
  * @property {(lod: number, falloff: number) => void} noiseDetail 
  * @property {(seed: number) => void} noiseSeed
 */
