@@ -1,14 +1,14 @@
 //@ts-check
-import * as lb2dVec from './lb2dVec.js';
+import * as lb2d from './lb2d.js';
 
-/** @type {lb2dVec.Vector} */
-const v0 = lb2dVec.fromAngle(150, 10);
+/** @type {lb2d.Vector} */
+const v0 = lb2d.fromAngle(150, 10);
 
-const v1 = lb2dVec.Vector(0,100);
+const v1 = lb2d.Vector(0,100);
 const v2 = v1.copy();
 const v3 = v1.copy();
-const n = lb2dVec.crossProduct(v1, v2);
-const v4 = lb2dVec.fromAngle(2.5,100);
+const n = lb2d.crossProduct(v1, v2);
+const v4 = lb2d.fromAngle(2.5,100);
 
 v2.set(100,100);
 

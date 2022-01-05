@@ -33,8 +33,7 @@ export function init(w, h) {
 
 /** Starts Animation Loop
  * @type {(fnDraw: function) => void}
- * @param fnDraw Callback Function
- */
+ * @param fnDraw Callback Function */
 export function startAnimation(fnDraw) {
   let draw = fnDraw;
   loop = true;
@@ -65,8 +64,7 @@ export function noLoop() {
 }
 
 /** update mouse position
- * @type {(e: MouseEvent) => void} 
- */
+ * @type {(e: MouseEvent) => void}  */
 function updMousePos(e) {
   mouseX = e.offsetX;
   mouseY = e.offsetY;
@@ -93,8 +91,7 @@ function updTouchPos(e) {
 }
 
 /** update status down position
- * @type {(e: TouchEvent) => void} 
- */
+ * @type {(e: TouchEvent) => void} */
 function setTouchDown(e) {
   mouseStatus = 1;
   updTouchPos(e);
@@ -134,22 +131,28 @@ export function createP(item) {
   output.appendChild(newItem);
 }
 
+/** saves the current drawing state. Use together with pop */
 export function push() {
   ctx.save();
 }
 
+/** restores drawing state. Use together with push */
 export function pop() {
   ctx.restore();
 }
 
+/** Transformation to current matrix 
+ * @type {(x: number, y: number) => void} */
 export function translate(x, y) {
   ctx.translate(x, y);
 }
-
+/** rotates drawing context in degrees
+ * @param {number} n degrees */
 export function rotate(n) {
   ctx.rotate(n);
 }
 
+/** @type {(...color: number[]) => void} */
 export function fillColor(...color) {
   let r;
   let g;
@@ -167,6 +170,7 @@ export function fillColor(...color) {
   ctx.fillStyle = `RGB(${r},${g},${b})`;
 }
 
+/** @type {(color: number, x: number, y:number, max: number) => void} */
 export function strokeGrd(color, x, y, max) {
   const grd = ctx.createRadialGradient(x, y, 5, x, y, max);
   grd.addColorStop(0, `RGB(${color},${color},${color})`);
@@ -174,6 +178,7 @@ export function strokeGrd(color, x, y, max) {
   ctx.strokeStyle = grd;
 }
 
+/** @type {(...color: number[]) => void} */
 export function strokeColor(...color) {
   let r;
   let g;
@@ -191,10 +196,12 @@ export function strokeColor(...color) {
   ctx.strokeStyle = `RGB(${r},${g},${b})`;
 }
 
+/** @type {(w: number) => void} */
 export function strokeWidth(w) {
   ctx.lineWidth = w;
 }
 
+/** @type {(...color: number[]) => void} */
 export function background(...color) {
   let r;
   let g;
@@ -215,6 +222,12 @@ export function background(...color) {
   pop();
 }
 
+/** drawing rectangle with start position
+ * @param {number} x position-x 
+ * @param {number} y position-y
+ * @param {number} w width
+ * @param {number} h height
+ * @param {number} style 0, 1 or 2 */
 export function rect(x, y, w, h, style = 0) {
   if (style == 0) {
     ctx.strokeRect(x, y, w, h);
@@ -228,6 +241,11 @@ export function rect(x, y, w, h, style = 0) {
   }
 }
 
+/** drawing line
+ * @param {number} x1 point 1
+ * @param {number} y1 point 1
+ * @param {number} x2 point 2
+ * @param {number} y2 point 2 */
 export function line(x1, y1, x2, y2) {
   const path = new Path2D();
   path.moveTo(x1, y1);
@@ -235,7 +253,14 @@ export function line(x1, y1, x2, y2) {
   path.closePath();
   ctx.stroke(path);
 }
-
+/** drawing triangle
+ * @param {number} x1 point 1
+ * @param {number} y1 point 1
+ * @param {number} x2 point 2
+ * @param {number} y2 point 2
+ * @param {number} x3 point 3
+ * @param {number} y3 point 3
+ * @param {number} style 0, 1 or 2 */
 export function triangle(x1, y1, x2, y2, x3, y3, style = 0) {
   const path = new Path2D();
   path.moveTo(x1, y1);
@@ -254,7 +279,17 @@ export function triangle(x1, y1, x2, y2, x3, y3, style = 0) {
   }
 }
 
-export function rectangle(x1, y1, x2, y2, x3, y3, x4, y4, style = 0) {
+/** drawing shape with 4 points
+ * @param {number} x1 point 1
+ * @param {number} y1 point 1
+ * @param {number} x2 point 2
+ * @param {number} y2 point 2
+ * @param {number} x3 point 3
+ * @param {number} y3 point 3
+ * @param {number} x4 point 4
+ * @param {number} y4 point 4
+ * @param {number} style 0, 1 or 2 */
+export function shape(x1, y1, x2, y2, x3, y3, x4, y4, style = 0) {
   const path = new Path2D();
   path.moveTo(x1, y1);
   path.lineTo(x2, y2);
@@ -273,6 +308,12 @@ export function rectangle(x1, y1, x2, y2, x3, y3, x4, y4, style = 0) {
   }
 }
 
+/**
+ * 
+ * @param {number} x position-x
+ * @param {number} y position-y
+ * @param {number} radius 
+ * @param {number} style 0, 1 or 2 */
 export function circle(x, y, radius, style = 0) {
   const path = new Path2D();
   path.arc(x, y, radius, 0, 2 * Math.PI);
@@ -289,6 +330,15 @@ export function circle(x, y, radius, style = 0) {
   }
 }
 
+/** Interface Perlin
+ * @typedef {Object} Perlin
+ * @property {(x: number, y: number, z: number) => number} noise returns perlin noise value (between 0 and 1)
+ * @property {(lod: number, falloff: number) => void} noiseDetail 
+ * @property {(seed: number) => void} noiseSeed
+*/
+
+/** returns perlin object
+ * @type {() => Perlin} */
 export function perlinNoise() {
   const PERLIN_YWRAPB = 4;
   const PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
@@ -303,14 +353,11 @@ export function perlinNoise() {
 
   let perlin; // will be initialized lazily by noise() or noiseSeed()
 
-  /**
-   * @method noise
+  /** @method noise
    * @param  {Number} x   x-coordinate in noise space
    * @param  {Number} [y] y-coordinate in noise space
    * @param  {Number} [z] z-coordinate in noise space
-   * @return {Number}     Perlin noise value (between 0 and 1) at specified coordinates
-   */
-
+   * @return {Number}     Perlin noise value (between 0 and 1) at specified coordinates */
   const noise = function (x, y = 0, z = 0) {
     if (perlin == null) {
       perlin = new Array(PERLIN_SIZE + 1);
@@ -388,11 +435,9 @@ export function perlinNoise() {
     return r;
   };
 
-  /**
-   * @method noiseDetail
+  /** @method noiseDetail
    * @param {Number} lod number of octaves to be used by the noise
-   * @param {Number} falloff falloff factor for each octave
-   */
+   * @param {Number} falloff falloff factor for each octave */
   const noiseDetail = function (lod, falloff) {
     if (lod > 0) {
       perlin_octaves = lod;
@@ -402,10 +447,8 @@ export function perlinNoise() {
     }
   };
 
-  /**
-   * @method noiseSeed
-   * @param {Number} seed   the seed value
-   */
+  /** @method noiseSeed
+   * @param {Number} seed   the seed value */
   const noiseSeed = function (seed) {
     // Linear Congruential Generator
     // Variant of a Lehman Generator
