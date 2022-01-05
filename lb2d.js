@@ -152,7 +152,9 @@ export function rotate(n) {
   ctx.rotate(n);
 }
 
-/** @type {(...color: number[]) => void} */
+/** Fillcolor of shape
+ * @param  {...number} color r (0..255), g (0...255), b (0...255)
+ */
 export function fillColor(...color) {
   let r;
   let g;
@@ -170,7 +172,11 @@ export function fillColor(...color) {
   ctx.fillStyle = `RGB(${r},${g},${b})`;
 }
 
-/** @type {(color: number, x: number, y:number, max: number) => void} */
+/** Stroke Gradiant 
+ * @param {number} color 0...255
+ * @param {number} x 
+ * @param {number} y 
+ * @param {number} max  */
 export function strokeGrd(color, x, y, max) {
   const grd = ctx.createRadialGradient(x, y, 5, x, y, max);
   grd.addColorStop(0, `RGB(${color},${color},${color})`);
@@ -178,7 +184,8 @@ export function strokeGrd(color, x, y, max) {
   ctx.strokeStyle = grd;
 }
 
-/** @type {(...color: number[]) => void} */
+/** Strokecolor of shape
+ * @param  {...number} color r (0..255), g (0...255), b (0...255)  */
 export function strokeColor(...color) {
   let r;
   let g;
@@ -196,12 +203,14 @@ export function strokeColor(...color) {
   ctx.strokeStyle = `RGB(${r},${g},${b})`;
 }
 
-/** @type {(w: number) => void} */
+/** strokewidth of line
+ * @param {number} w width  */
 export function strokeWidth(w) {
   ctx.lineWidth = w;
 }
 
-/** @type {(...color: number[]) => void} */
+/** background color of drawing context
+ * @param  {...number} color r (0..255), g (0...255), b (0...255)  */
 export function background(...color) {
   let r;
   let g;
@@ -328,6 +337,23 @@ export function circle(x, y, radius, style = 0) {
     ctx.stroke(path);
     ctx.fill(path);
   }
+}
+
+/** Draw an arrow 
+ * @type {(v_base: Vector, v_target: Vector, myColor: number) => void} */
+ export function drawArrow(v_base, v_target, myColor) {
+  const v_heading = subVector(v_target, v_base);
+  push();
+  strokeColor(myColor);
+  strokeWidth(3);
+  fillColor(myColor);
+  translate(v_base.pos.x, v_base.pos.y);
+  line(0, 0, v_heading.pos.x, v_heading.pos.y);
+  rotate(v_heading.heading());
+  let arrowSize = 7;
+  translate(v_heading.mag() - arrowSize, 0);
+  triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+  pop();
 }
 
 /** Interface Perlin
@@ -495,14 +521,31 @@ export function perlinNoise() {
   };
 }
 
+/** randomgenerator between n1 and n2
+ * @param {number} n1 
+ * @param {number} n2 
+ * @returns {number} */
 export function random(n1, n2) {
   return Math.floor(Math.random() * (n2 - n1) + n1);
 }
 
+/** limits value between min and max
+ * @param {number} value 
+ * @param {number} min 
+ * @param {number} max 
+ * @returns {number} */
 export function constrain(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
+/** scales value n to a new range
+ * @param {number} n number to scale
+ * @param {number} start1 old range
+ * @param {number} stop1 old range
+ * @param {number} start2 new range
+ * @param {number} stop2 new range
+ * @returns {number}
+ */
 export function map(n, start1, stop1, start2, stop2) {
   const newval = ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
   if (start2 < stop2) {
@@ -512,6 +555,10 @@ export function map(n, start1, stop1, start2, stop2) {
   }
 }
 
+/** Limits number 
+ * @param {number} number 
+ * @param {number} limit 
+ * @returns {number} */
 export function limitNum(number, limit) {
   const vorzeichen = number < 0 ? -1 : 1;
   let numberMag = Math.abs(number);
@@ -521,26 +568,9 @@ export function limitNum(number, limit) {
   return numberMag * vorzeichen;
 }
 
-/** Draw an arrow 
- * @type {(v_base: Vector, v_target: Vector, myColor: number) => void} */
-export function drawArrow(v_base, v_target, myColor) {
-  const v_heading = subVector(v_target, v_base);
-  push();
-  strokeColor(myColor);
-  strokeWidth(3);
-  fillColor(myColor);
-  translate(v_base.pos.x, v_base.pos.y);
-  line(0, 0, v_heading.pos.x, v_heading.pos.y);
-  rotate(v_heading.heading());
-  let arrowSize = 7;
-  translate(v_heading.mag() - arrowSize, 0);
-  triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
-  pop();
-}
-
-//********************************************
+///////////////////////////////////////////////
 //     Ab hier Implementierung für Vector !!!
-//********************************************
+///////////////////////////////////////////////
 
 /** Interface Vector
  * @typedef {Object} Vector
