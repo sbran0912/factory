@@ -600,7 +600,7 @@ export function limitNum(number, limit) {
 /** creates an Vector 
  * @type {(x: number, y: number) => Vector} 
  * */
- export function Vector (x, y) {
+ export function createVector (x, y) {
   
   const pos = {x, y}
 
@@ -611,7 +611,7 @@ export function limitNum(number, limit) {
   }
   /** @type {() => Vector} */
   function copy() {
-    return Vector(pos.x, pos.y);
+    return createVector(pos.x, pos.y);
   }
 
   /** @type {(n: number) => void} */
@@ -722,7 +722,7 @@ export function limitNum(number, limit) {
 
   /** @type {() => Vector} */
   function perp() {
-    return Vector(-pos.y, pos.x);
+    return createVector(-pos.y, pos.x);
   }
   
   // public
@@ -756,7 +756,7 @@ export function limitNum(number, limit) {
   const angle = Math.random() * Math.PI * 2;
   const x = Math.cos(angle);
   const y = Math.sin(angle);
-  return Vector(x, y);
+  return createVector(x, y);
 }
 
 /** creates Vector with angle
@@ -766,19 +766,19 @@ export function limitNum(number, limit) {
  export function fromAngle(angle, len) {
   const x = len * Math.cos(angle);
   const y = len * Math.sin(angle);
-  return Vector(x, y);
+  return createVector(x, y);
 }
 
 /** adds v2 to v1 an creates new Vector
  * @type {(v1: Vector, v2: Vector)=> Vector} */
  export function addVector(v1, v2) {
-  return Vector(v1.pos.x + v2.pos.x, v1.pos.y + v2.pos.y);
+  return createVector(v1.pos.x + v2.pos.x, v1.pos.y + v2.pos.y);
 }
 
 /** substract v2 from v1 and create new Vector
  * @type {(v1: Vector, v2: Vector)=> Vector} */
  export function subVector(v1, v2) {
-  return Vector(v1.pos.x - v2.pos.x, v1.pos.y - v2.pos.y);
+  return createVector(v1.pos.x - v2.pos.x, v1.pos.y - v2.pos.y);
 }
 
 /** multiply vector with scalar

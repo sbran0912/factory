@@ -1,4 +1,5 @@
-import * as lb2d from './lib2d.js';
+//@ts-check
+import * as lb2d from './lb2d.js';
 
 class Box {
     /**
@@ -42,7 +43,7 @@ class Box {
     }
     
     /** Reset the position of then Box
-     * @param {Vector} v
+     * @param {lb2d.Vector} v
      */
     resetPos(v) {
         this.location.add(v);
@@ -55,8 +56,8 @@ class Box {
     display() {
         lb2d.strokeColor(1, 109, 143);
         lb2d.strokeWidth(2);
-        lb2d.rectangle(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y, this.vertices[2].x, this.vertices[2].y, this.vertices[3].x, this.vertices[3].y, 0);
-        lb2d.circle(this.location.x, this.location.y, 2, 0);
+        lb2d.shape(this.vertices[0].pos.x, this.vertices[0].pos.y, this.vertices[1].pos.x, this.vertices[1].pos.y, this.vertices[2].pos.x, this.vertices[2].pos.y, this.vertices[3].pos.x, this.vertices[3].pos.y, 0);
+        lb2d.circle(this.location.pos.x, this.location.pos.y, 2, 0);
     }
 
     applyForce(force, AngForce) {
@@ -102,8 +103,8 @@ class Ball {
     display() {
         lb2d.strokeColor(255, 127, 36);
         lb2d.strokeWidth(2);
-        lb2d.circle(this.location.x, this.location.y, this.radius, 0);
-        lb2d.line(this.location.x, this.location.y, this.orientation.x, this.orientation.y);
+        lb2d.circle(this.location.pos.x, this.location.pos.y, this.radius, 0);
+        lb2d.line(this.location.pos.x, this.location.pos.y, this.orientation.pos.x, this.orientation.pos.y);
     }
 
     rotate(angle) {
@@ -117,7 +118,7 @@ class Ball {
     }
 
     /**
-     * @param {Vector} v
+     * @param {lb2d.Vector} v
      */
     resetPos(v) {
         this.location.add(v);
@@ -198,24 +199,24 @@ export function detectCollisionBoxes(a, b) {
             boxB = a;
         }
         let z = lb2d.subVector(boxB.location, boxA.location);
-        let z_perp = lb2d.createVector(-(z.y), z.x);
+        let z_perp = lb2d.createVector(-(z.pos.y), z.pos.x);
         for (let i = 0; i < 4; i++) {
             let d = lb2d.subVector(boxA.vertices[i], boxA.location);
-            let d_perp = lb2d.createVector(-(d.y), d.x);
+            let d_perp = lb2d.createVector(-(d.pos.y), d.pos.x);
             for (let j = 0; j < 4; j++) {
                 let e = lb2d.subVector(boxB.vertices[j + 1], boxB.vertices[j]);
-                let e_perp = lb2d.createVector(-(e.y), e.x);
-                if (lb2d.dotVector(d_perp, e) != 0) {
+                let e_perp = lb2d.createVector(-(e.pos.y), e.pos.x);
+                if (lb2d.dotProduct(d_perp, e) != 0) {
                     let f = lb2d.subVector(boxB.vertices[j], boxA.location);
-                    let scalar_e = -(lb2d.dotVector(d_perp, f)) / lb2d.dotVector(d_perp, e);
-                    let scalar_d = (lb2d.dotVector(e_perp, f)) / lb2d.dotVector(e_perp, d);
-                    let scalar_e2 = -(lb2d.dotVector(z_perp, f)) / lb2d.dotVector(z_perp, e);
+                    let scalar_e = -(lb2d.dotProduct(d_perp, f)) / lb2d.dotProduct(d_perp, e);
+                    let scalar_d = (lb2d.dotProduct(e_perp, f)) / lb2d.dotProduct(e_perp, d);
+                    let scalar_e2 = -(lb2d.dotProduct(z_perp, f)) / lb2d.dotProduct(z_perp, e);
                     if (scalar_e > 0 && scalar_e <= 1 && scalar_d > 0 && scalar_d <= 1 && scalar_e2 > 0 && scalar_e2 < 1) {
                         let P = lb2d.addVector(boxB.vertices[j], lb2d.multVector(e, scalar_e));
                         let mtv = d.copy();
                         mtv.mult(1 - scalar_d);
                         e_perp.normalize();
-                        let distance = lb2d.dotVector(e_perp, mtv);
+                        let distance = lb2d.dotProduct(e_perp, mtv);
                         let normal_e = lb2d.multVector(e_perp, -distance);
                         boxA.resetPos(lb2d.multVector(normal_e, 0.5));
                         boxB.resetPos(lb2d.multVector(normal_e, -0.5));
@@ -232,38 +233,38 @@ export function detectCollisionBoxes(a, b) {
 /** Berechnet Kollision zweier Boxen
  * @param {Box} boxA
  * @param {Box} boxB
- * @param {Vector} cp Collisionpoint
- * @param {Vector} normal Normalvektor von Kante j
+ * @param {lb2d.Vector} cp Collisionpoint
+ * @param {lb2d.Vector} normal Normalvektor von Kante j
  */
 function resoveCollisionBoxes(boxA, boxB, cp, normal) {
     // rAP = Linie von A.location zu Kollisionspunkt (Ecke i von BoxA)
     // rBP = Linie von B.location zu Kollisionspunkt (ebenfalls Ecke i von BoxA)
     const rAP = lb2d.subVector(cp, boxA.location);
     const rBP = lb2d.subVector(cp, boxB.location);
-    const rAP_perp = lb2d.createVector(-rAP.y, rAP.x);
-    const rBP_perp = lb2d.createVector(-rBP.y, rBP.x);
+    const rAP_perp = lb2d.createVector(-rAP.pos.y, rAP.pos.x);
+    const rBP_perp = lb2d.createVector(-rBP.pos.y, rBP.pos.x);
     const VtanA = lb2d.multVector(rAP_perp, boxA.angVelocity);
     const VtanB = lb2d.multVector(rBP_perp, boxB.angVelocity);
     const VgesamtA = lb2d.addVector(boxA.velocity, VtanA);
     const VgesamtB = lb2d.addVector(boxB.velocity, VtanB);
     const velocity_AB = lb2d.subVector(VgesamtA, VgesamtB);
     
-    if (lb2d.dotVector(velocity_AB, normal) < 0) { // wenn negativ, dann auf Kollisionskurs
+    if (lb2d.dotProduct(velocity_AB, normal) < 0) { // wenn negativ, dann auf Kollisionskurs
         const e = 1; //inelastischer Stoß
-        const j_denominator = lb2d.dotVector(lb2d.multVector(velocity_AB, -(1+e)), normal);
-        const j_divLinear = lb2d.dotVector(normal, lb2d.multVector(normal, (1/boxA.mass + 1/boxB.mass)));
-        const j_divAngular = Math.pow(lb2d.dotVector(rAP_perp, normal), 2) / boxA.inertia + Math.pow(lb2d.dotVector(rBP_perp, normal), 2) / boxB.inertia;
+        const j_denominator = lb2d.dotProduct(lb2d.multVector(velocity_AB, -(1+e)), normal);
+        const j_divLinear = lb2d.dotProduct(normal, lb2d.multVector(normal, (1/boxA.mass + 1/boxB.mass)));
+        const j_divAngular = Math.pow(lb2d.dotProduct(rAP_perp, normal), 2) / boxA.inertia + Math.pow(lb2d.dotProduct(rBP_perp, normal), 2) / boxB.inertia;
         const j = j_denominator / (j_divLinear + j_divAngular);
         // Grundlage für Friction berechnen
-        const t = lb2d.createVector(-(normal.y), normal.x);
-        const t_scalarprodukt = lb2d.dotVector(velocity_AB, t);
+        const t = lb2d.createVector(-(normal.pos.y), normal.pos.x);
+        const t_scalarprodukt = lb2d.dotProduct(velocity_AB, t);
         t.mult(t_scalarprodukt);
         t.normalize();
 
         boxA.velocity.add(lb2d.addVector(lb2d.multVector(normal, (j/boxA.mass)), lb2d.multVector(t, (0.2*-j/boxA.mass))));
         boxB.velocity.add(lb2d.addVector(lb2d.multVector(normal, (-j/boxB.mass)), lb2d.multVector(t, (0.2*j/boxB.mass))));
-        boxA.angVelocity += lb2d.dotVector(rAP_perp, lb2d.addVector(lb2d.multVector(normal, j/boxA.inertia), lb2d.multVector(t, 0.2*-j/boxA.inertia)));
-        boxB.angVelocity += lb2d.dotVector(rBP_perp, lb2d.addVector(lb2d.multVector(normal, -j/boxB.inertia), lb2d.multVector(t, 0.2*j/boxB.inertia)));
+        boxA.angVelocity += lb2d.dotProduct(rAP_perp, lb2d.addVector(lb2d.multVector(normal, j/boxA.inertia), lb2d.multVector(t, 0.2*-j/boxA.inertia)));
+        boxB.angVelocity += lb2d.dotProduct(rBP_perp, lb2d.addVector(lb2d.multVector(normal, -j/boxB.inertia), lb2d.multVector(t, 0.2*j/boxB.inertia)));
     }
 }    
 
@@ -291,33 +292,33 @@ export function detectCollisionBalls(ballA, ballB) {
 /** Berechnet Kollision zweier Bälle
  * @param {Ball} ballA 
  * @param {Ball} ballB 
- * @param {Vector} normal
+ * @param {lb2d.Vector} normal
  */
 function resolveCollisionBalls(ballA, ballB, normal) {
     const rA = lb2d.multVector(normal, -ballA.radius);
-    const rA_perp = lb2d.createVector(-rA.y, rA.x);
+    const rA_perp = lb2d.createVector(-rA.pos.y, rA.pos.x);
     const rB = lb2d.multVector(normal, ballB.radius);
-    const rB_perp = lb2d.createVector(-rB.y, rB.x);
+    const rB_perp = lb2d.createVector(-rB.pos.y, rB.pos.x);
     const VtanA = lb2d.multVector(rA_perp, ballA.angVelocity);
     const VtanB = lb2d.multVector(rB_perp, ballB.angVelocity);
     const VgesamtA = lb2d.addVector(ballA.velocity, VtanA);
     const VgesamtB = lb2d.addVector(ballB.velocity, VtanB);
     const velocity_AB = lb2d.subVector(VgesamtA, VgesamtB);
 
-    if (lb2d.dotVector(velocity_AB, normal) < 0) { // wenn negativ, dann auf Kollisionskurs
+    if (lb2d.dotProduct(velocity_AB, normal) < 0) { // wenn negativ, dann auf Kollisionskurs
         const e = 1; //inelastischer Stoß
-        const j_denominator = lb2d.dotVector(lb2d.multVector(velocity_AB, -(1+e)), normal);
-        const j_divLinear = lb2d.dotVector(normal, lb2d.multVector(normal, (1/ballA.mass + 1/ballB.mass)));
+        const j_denominator = lb2d.dotProduct(lb2d.multVector(velocity_AB, -(1+e)), normal);
+        const j_divLinear = lb2d.dotProduct(normal, lb2d.multVector(normal, (1/ballA.mass + 1/ballB.mass)));
         const j = j_denominator / j_divLinear;
         // Grundlage für Friction berechnen
-        const t = lb2d.createVector(-(normal.y), normal.x);
-        const t_scalarprodukt = lb2d.dotVector(velocity_AB, t);
+        const t = lb2d.createVector(-(normal.pos.y), normal.pos.x);
+        const t_scalarprodukt = lb2d.dotProduct(velocity_AB, t);
         t.mult(t_scalarprodukt);
         t.normalize();
         ballA.velocity.add(lb2d.addVector(lb2d.multVector(normal, (j/ballA.mass)), lb2d.multVector(t, (0.2*-j/ballA.mass))));
         ballB.velocity.add(lb2d.addVector(lb2d.multVector(normal, (-j/ballB.mass)), lb2d.multVector(t, (0.2*j/ballB.mass))))
-        ballA.angVelocity += lb2d.dotVector(rA_perp, lb2d.multVector(t, 0.1*-j/ballA.inertia));
-        ballB.angVelocity += lb2d.dotVector(rB_perp, lb2d.multVector(t, 0.1*j/ballB.inertia));
+        ballA.angVelocity += lb2d.dotProduct(rA_perp, lb2d.multVector(t, 0.1*-j/ballA.inertia));
+        ballB.angVelocity += lb2d.dotProduct(rB_perp, lb2d.multVector(t, 0.1*j/ballB.inertia));
     }
 }
 
@@ -339,7 +340,7 @@ export function detectCollisionBallBoxes(ball, box) {
         let mag_e = e.mag();
         e.normalize();
         //Scalarprojektion von Vektor VerticeToBall auf Kante e
-        let scalar_e = lb2d.dotVector(VerticeToBall, e);
+        let scalar_e = lb2d.dotProduct(VerticeToBall, e);
         if (scalar_e > 0 && scalar_e <= mag_e) {
             //Senkrechte von Ball trifft auf Kante e der Box
             //e2 = Kante e mit der Länge von scalar_e
@@ -367,37 +368,37 @@ export function detectCollisionBallBoxes(ball, box) {
 /** Berechnet Kollision Ball zu Box
  * @param {Ball} ball 
  * @param {Box} box 
- * @param {Vector} cp    Collisionpoint
- * @param {Vector} normal Senkrechte von Kante e
+ * @param {lb2d.Vector} cp    Collisionpoint
+ * @param {lb2d.Vector} normal Senkrechte von Kante e
  */
 function resolveCollisionBallBoxes(ball, box, cp, normal) {
     const rA = lb2d.multVector(normal, -ball.radius);
-    const rA_perp = lb2d.createVector(-rA.y, rA.x);
+    const rA_perp = lb2d.createVector(-rA.pos.y, rA.pos.x);
     const rBP = lb2d.subVector(cp, box.location);
-    const rBP_perp = lb2d.createVector(-rBP.y, rBP.x);
+    const rBP_perp = lb2d.createVector(-rBP.pos.y, rBP.pos.x);
     const VtanA = lb2d.multVector(rA_perp, ball.angVelocity);
     const VgesamtA = lb2d.addVector(ball.velocity, VtanA);
     const VtanB = lb2d.multVector(rBP_perp, box.angVelocity);
     const VgesamtB = lb2d.addVector(box.velocity, VtanB);
     const velocity_AB = lb2d.subVector(VgesamtA, VgesamtB);
 
-    if (lb2d.dotVector(velocity_AB, normal) < 0) { // wenn negativ, dann auf Kollisionskurs
+    if (lb2d.dotProduct(velocity_AB, normal) < 0) { // wenn negativ, dann auf Kollisionskurs
 
         const e = 1; //inelastischer Stoß
-        const j_denominator = lb2d.dotVector(lb2d.multVector(velocity_AB, -(1+e)), normal);
-        const j_divLinear = lb2d.dotVector(normal, lb2d.multVector(normal, (1/ball.mass + 1/box.mass)));
-        const j_divAngular = Math.pow(lb2d.dotVector(rBP_perp, normal), 2) / box.inertia; //nur für Box zu rechnen
+        const j_denominator = lb2d.dotProduct(lb2d.multVector(velocity_AB, -(1+e)), normal);
+        const j_divLinear = lb2d.dotProduct(normal, lb2d.multVector(normal, (1/ball.mass + 1/box.mass)));
+        const j_divAngular = Math.pow(lb2d.dotProduct(rBP_perp, normal), 2) / box.inertia; //nur für Box zu rechnen
         const j = j_denominator / (j_divLinear + j_divAngular);
         // Grundlage für Friction berechnen
-        const t = lb2d.createVector(-(normal.y), normal.x);
-        const t_scalarprodukt = lb2d.dotVector(velocity_AB, t);
+        const t = lb2d.createVector(-(normal.pos.y), normal.pos.x);
+        const t_scalarprodukt = lb2d.dotProduct(velocity_AB, t);
         t.mult(t_scalarprodukt);
         t.normalize();
 
         ball.velocity.add(lb2d.addVector(lb2d.multVector(normal, (j/ball.mass)), lb2d.multVector(t, (0.05*-j/ball.mass))));
         box.velocity.add(lb2d.addVector(lb2d.multVector(normal, (-j/box.mass)), lb2d.multVector(t, (0.05*j/box.mass))));
-        ball.angVelocity += lb2d.dotVector(rA_perp, lb2d.multVector(t, 0.05*-j/ball.inertia));
-        box.angVelocity += lb2d.dotVector(rBP_perp, lb2d.addVector(lb2d.multVector(normal, -j/box.inertia), lb2d.multVector(t, 0.05*j/box.inertia)));
+        ball.angVelocity += lb2d.dotProduct(rA_perp, lb2d.multVector(t, 0.05*-j/ball.inertia));
+        box.angVelocity += lb2d.dotProduct(rBP_perp, lb2d.addVector(lb2d.multVector(normal, -j/box.inertia), lb2d.multVector(t, 0.05*j/box.inertia)));
     }
 
 
