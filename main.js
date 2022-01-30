@@ -67,7 +67,7 @@ function draw() {
     if (lb2d.isMouseDown() && arrow.index == null) {
         balls.forEach((element, index) => {
             if (element.location.dist(lb2d.createVector(lb2d.mouseX, lb2d.mouseY)) < element.mass) {
-              arrow.base.set(element.location.x, element.location.y);
+              arrow.base.set(element.location.pos.x, element.location.pos.y);
               arrow.index = index;
             }
         })    
