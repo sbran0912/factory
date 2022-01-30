@@ -10,7 +10,7 @@ const arrow = {
 
 
 function start() {
-    lb2d.init( 700, 500);
+    lb2d.init( 800, 500);
     for (let i = 0; i < 4; i++) {
         balls.push(phys.createBall(lb2d.random(0, 700), lb2d.random(0, 400), lb2d.random(10, 40)));
     }    
