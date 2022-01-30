@@ -1,4 +1,4 @@
-import * as lb2d from './lib2d.js';
+import * as lb2d from './lb2d.js';
 import * as phys from './physics.js';
 
 const balls = [];
