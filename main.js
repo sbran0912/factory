@@ -19,7 +19,7 @@ function start() {
         boxes.push(phys.createBox(lb2d.random(0, 700), lb2d.random(0, 400), lb2d.random(40, 100), lb2d.random(40, 100)));
     }
 
-    // 4 Boxen als Umrandung
+    // 4 Boxen als Umrandung 
     boxes.push(phys.createBox(0, 0, 800, 1));
     boxes[4].mass = Infinity; boxes[4].inertia = Infinity;
     boxes.push(phys.createBox(0, 0, 1, 499));
