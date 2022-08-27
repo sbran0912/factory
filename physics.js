@@ -1,4 +1,3 @@
-//@ts-check
 import * as lb2d from './lb2d.js';
 
 class Box {
