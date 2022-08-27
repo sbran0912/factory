@@ -1,5 +1,3 @@
-//@ts-check
-
 // Bibliothek lb2d
 // von Stefan Brandner, inspiriert (und abgekupfert) von P5
 
